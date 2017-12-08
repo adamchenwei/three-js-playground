@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-import three from 'three';
-
+import * as THREE from 'three'
+             
 class App extends Component {
   constructor() {
     super();
-    console.log(three);
+    console.log(THREE);
   }
   render() {
     return (
