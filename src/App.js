@@ -1,62 +1,72 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-
+import ReactDOM from 'react-dom';
 import * as THREE from 'three'
              
 class App extends Component {
   constructor() {
     super();
     console.log(THREE);
-    init();
-    animate();
+    this.camera = null;
+    this.scene = null;
+    this.geometry = null;
+    this.material = null;
+    this.rendererThreeJs = null;
+    this.mesh = null;
+    this.holder = () => {};
+    this.holder = this.holder.bind(this);
+    this.init();
+  }
+
+  init() {
+
+    this.camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
+    this.camera.position.z = 1;
+
+    this.scene = new THREE.Scene();
+
+    this.geometry = new THREE.BoxGeometry( 0.2, 0.2, 0.2 );
+    this.material = new THREE.MeshNormalMaterial();
+
+    this.mesh = new THREE.Mesh( this.geometry, this.material );
+    this.scene.add( this.mesh );
+
+    this.rendererThreeJs = new THREE.WebGLRenderer( { antialias: true } );
+    this.rendererThreeJs.setSize( window.innerWidth, window.innerHeight );
+
+  }
+  
+  animate() {
+    const holder = ReactDOM.findDOMNode(this.holder);
     
-    let camera = null;
-    let scene = null;
-    let geometry = null;
-    let material = null;
-    let renderer = null;
-    let mesh = null;
-    function init() {
-     
-        camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
-        camera.position.z = 1;
-     
-        scene = new THREE.Scene();
-     
-        geometry = new THREE.BoxGeometry( 0.2, 0.2, 0.2 );
-        material = new THREE.MeshNormalMaterial();
-     
-        mesh = new THREE.Mesh( geometry, material );
-        scene.add( mesh );
-     
-        renderer = new THREE.WebGLRenderer( { antialias: true } );
-        renderer.setSize( window.innerWidth, window.innerHeight );
-        document.body.appendChild( renderer.domElement );
-     
-    }
-     
-    function animate() {
-     
-        requestAnimationFrame( animate );
-     
-        mesh.rotation.x += 0.01;
-        mesh.rotation.y += 0.02;
-     
-        renderer.render( scene, camera );
-     
-    }
+    holder.appendChild(this.rendererThreeJs.domElement);
+    //document.body.appendChild( this.rendererThreeJs.domElement );
+    console.log(requestAnimationFrame);
+    requestAnimationFrame( this.animate );
+
+    this.mesh.rotation.x += 0.01;
+    this.mesh.rotation.y += 0.02;
+
+    this.rendererThreeJs.render( this.scene, this.camera );
+    
+   }
+
+  componentDidMount() {
+    this.animate();
   }
   render() {
+    this.animate();
     return (
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">Welcome to React</h1>
         </header>
-        <p className="App-intro">
+        <div className="App-intro">
+          <div ref={(el) => {this.holder = el}}></div>
           To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+        </div>
       </div>
     );
   }
